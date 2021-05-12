@@ -9,6 +9,9 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import plot_confusion_matrix, classification_report
 
+from sklearn import svm
+from sklearn.model_selection import GridSearchCV
+
 def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     clf = tree.DecisionTreeClassifier()
     
@@ -48,7 +51,25 @@ def neural(beans, X, y, X_train, X_test, y_train, y_test):
     plot_confusion_matrix(clf, X_test, y_test)
     plt.show()
      
+# Support vector classification
+def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
+    print("kernel used: ", kernel)
     
+    clf = svm.SVC(kernel=kernel, cache_size=500, C=10, gamma=0.001)
+    clf.fit(X_train, y_train)
+
+    predictions = clf.predict(X_test)
+    print(classification_report(y_test, predictions))
+
+    plot_confusion_matrix(clf, X_test, y_test)
+    plt.show()
+    
+def svc_params_search(X, y, X_train, X_test, y_train, y_test):
+    # Evaluates and searches for the best svc parameters
+    params = {'C': [0.1, 1, 10, 100], 'gamma': [1, 0.1, 0.01, 0.001], 'kernel': ['rbf']}
+    grid = GridSearchCV(svm.SVC(),params,refit=True,verbose=2)
+    grid.fit(X_train,y_train)
+    print(grid.best_estimator_)
     
 
 def main():
@@ -67,7 +88,11 @@ def main():
     
     # dfs(beans, X, y, X_train, X_test, y_train, y_test)
      
-    neural(beans, X, y, X_train, X_test, y_train, y_test)
+    #neural(beans, X, y, X_train, X_test, y_train, y_test)
+
+    svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
+    #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
+    #svc_params_search(X, y, X_train, X_test, y_train, y_test)
    
     
     
