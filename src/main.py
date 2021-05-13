@@ -1,7 +1,10 @@
 import math
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sb
+import seaborn as sd
 import pandas as pd
+from matplotlib.colors import ListedColormap
+from sklearn.datasets import load_iris
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
@@ -9,8 +12,13 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import plot_confusion_matrix, classification_report
 
+
+
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import neighbors, datasets
 
 def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     clf = tree.DecisionTreeClassifier()
@@ -70,10 +78,23 @@ def svc_params_search(X, y, X_train, X_test, y_train, y_test):
     grid = GridSearchCV(svm.SVC(),params,refit=True,verbose=2)
     grid.fit(X_train,y_train)
     print(grid.best_estimator_)
-    
+
+
+
+#Nearest Neighbors Classification
+def knn(X, y, X_train, X_test, y_train, y_test):
+    neigh = KNeighborsClassifier(n_neighbors=3)
+    neigh.fit(X_train, y_train)
+
+    predictions = neigh.predict(X_test)
+    print(classification_report(y_test, predictions))
+
+    plot_confusion_matrix(neigh, X_test, y_test)
+    plt.show()
+
 
 def main():
-    beans = pd.read_csv('./resources/processed.csv', na_values=['NA'])
+    beans = pd.read_csv('../resources/processed.csv', na_values=['NA'])
     
     print(beans.head())
     
@@ -90,10 +111,12 @@ def main():
      
     #neural(beans, X, y, X_train, X_test, y_train, y_test)
 
-    svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
+    #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
     #svc_params_search(X, y, X_train, X_test, y_train, y_test)
-   
+
+    #knn(X,y, X_train, X_test, y_train, y_test)
+
     
     
 if __name__ == "__main__":

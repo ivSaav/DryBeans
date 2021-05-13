@@ -33,7 +33,7 @@ def violin_plot(data, columns, out_file, out_dir='./output/'):
 #print(beans_data.describe())
 
 #beans_data = pd.read_excel('./resources/dataset.xlsx', na_values=['NA'])  
-beans_data = pd.read_excel('./resources/dataset.xlsx', na_values=['NA'], engine='openpyxl')
+beans_data = pd.read_excel('../resources/dataset.xlsx', na_values=['NA'], engine='openpyxl')
 
 # null values verification
 n = beans_data.isnull().sum().sum()
@@ -95,7 +95,7 @@ final_data = final_data.append(sira_data)
 
 print("EQUALS ", cp.equals(beans_data))
 # open outup file in append mode
-outfile = './resources/processed.csv'
+outfile = '../resources/processed.csv'
 f = open(outfile, 'w')
 f.seek(0)
 f.truncate() # delete previous contents
