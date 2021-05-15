@@ -62,7 +62,12 @@ def neural(beans, X, y, X_train, X_test, y_train, y_test):
 # Support vector classification
 def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
     print("kernel used: ", kernel)
-    
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
     clf = svm.SVC(kernel=kernel, cache_size=500, C=10, gamma=0.001)
     clf.fit(X_train, y_train)
 
