@@ -1,10 +1,8 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sd
 import pandas as pd
 from matplotlib.colors import ListedColormap
-from sklearn.datasets import load_iris
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
@@ -21,15 +19,17 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn import neighbors, datasets
 
 def dfs(beans, X, y, X_train, X_test, y_train, y_test):
-    clf = tree.DecisionTreeClassifier()
+    print("DFS ====")
+    clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5)
     
     clf = clf.fit(X_test, y_test)
     
     plt.figure(figsize=(30, 30), dpi=500)
     tree.plot_tree(clf, feature_names=beans.columns[:-1].tolist(),class_names=pd.unique(y_test)) 
    
-    plt.savefig('tree.png') 
-    
+    predictions = clf.predict(X_test)  
+    print("\nClassification Report ========= ")
+    print(classification_report(y_test, predictions))  
     # print(beans.columns[:-1])
     # r = tree.export_text(clf, feature_names=beans.columns[:-1].tolist())
     # print(r)
@@ -37,16 +37,17 @@ def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     
 
 def neural(beans, X, y, X_train, X_test, y_train, y_test):
-    
+    print("NEURAL ====")
     scaler = StandardScaler()
     scaler.fit(X_train)
 
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
 
-    clf = MLPClassifier(solver='adam', max_iter=500)
-    clf.fit(X_train, y_train)
     
+    clf = MLPClassifier(solver='adam', hidden_layer_sizes=29, max_iter=500)
+    clf.fit(X_train, y_train)
+   
     # generate predictions
     predictions = clf.predict(X_test)
     print("\nClassification Report ========= ")
@@ -56,11 +57,12 @@ def neural(beans, X, y, X_train, X_test, y_train, y_test):
     print("Score: ", clf.score(X_test, y_test))  
     
     # show confusion matrix
-    plot_confusion_matrix(clf, X_test, y_test)
-    plt.show()
+    # plot_confusion_matrix(clf, X_test, y_test)
+    # plt.show()
      
 # Support vector classification
 def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
+    print("SVC ====")
     print("kernel used: ", kernel)
     
     clf = svm.SVC(kernel=kernel, cache_size=500, C=10, gamma=0.001)
@@ -69,8 +71,8 @@ def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
     predictions = clf.predict(X_test)
     print(classification_report(y_test, predictions))
 
-    plot_confusion_matrix(clf, X_test, y_test)
-    plt.show()
+    # plot_confusion_matrix(clf, X_test, y_test)
+    # plt.show()
     
 def svc_params_search(X, y, X_train, X_test, y_train, y_test):
     # Evaluates and searches for the best svc parameters
@@ -83,18 +85,19 @@ def svc_params_search(X, y, X_train, X_test, y_train, y_test):
 
 #Nearest Neighbors Classification
 def knn(X, y, X_train, X_test, y_train, y_test):
-    neigh = KNeighborsClassifier(n_neighbors=3)
+    print("KNN ====")
+    neigh = KNeighborsClassifier(n_neighbors=5)
     neigh.fit(X_train, y_train)
 
     predictions = neigh.predict(X_test)
     print(classification_report(y_test, predictions))
 
-    plot_confusion_matrix(neigh, X_test, y_test)
-    plt.show()
+    # plot_confusion_matrix(neigh, X_test, y_test)
+    # plt.show()
 
 
 def main():
-    beans = pd.read_csv('../resources/processed.csv', na_values=['NA'])
+    beans = pd.read_csv('./resources/processed.csv', na_values=['NA'])
     
     print(beans.head())
     
@@ -105,17 +108,17 @@ def main():
     # extract values and class labels
     X, y = beans.iloc[:, :-1], beans.iloc[:, -1]
     # split values into testing and training datasets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, train_size=0.8, random_state=5)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, train_size=0.8, random_state=0)
     
     # dfs(beans, X, y, X_train, X_test, y_train, y_test)
      
-    #neural(beans, X, y, X_train, X_test, y_train, y_test)
+    # neural(beans, X, y, X_train, X_test, y_train, y_test)
 
-    #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
-    #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
-    #svc_params_search(X, y, X_train, X_test, y_train, y_test)
+    # svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
+    # # svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
+    # #svc_params_search(X, y, X_train, X_test, y_train, y_test)
 
-    #knn(X,y, X_train, X_test, y_train, y_test)
+    knn(X,y, X_train, X_test, y_train, y_test)
 
     
     
