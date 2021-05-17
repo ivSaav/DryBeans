@@ -3,6 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import seaborn as sb
 import pandas as pd
+import numpy as np
 
 def plot_class_data(ds, class_name, out_file, out_dir='./output/'):
     data = ds.loc[ds['Class'] == f'{class_name}']
@@ -33,7 +34,7 @@ def violin_plot(data, columns, out_file, out_dir='./output/'):
 #print(beans_data.describe())
 
 #beans_data = pd.read_excel('./resources/dataset.xlsx', na_values=['NA'])  
-beans_data = pd.read_excel('../resources/dataset.xlsx', na_values=['NA'], engine='openpyxl')
+beans_data = pd.read_excel('./resources/dataset.xlsx', na_values=['NA'], engine='openpyxl')
 
 # null values verification
 n = beans_data.isnull().sum().sum()
@@ -63,39 +64,71 @@ print(beans_data.columns.insert(0, 'id'))
 final_data = pd.DataFrame(columns=beans_data.columns)
 cp = beans_data.copy()
 
+data = []
 # droping any seker rows with a Solidity value less than 0.96 (alll solidity values except one are clustered above 0.96)
 # droping values bellow 0.68 as Seker bean has a round shape and most values are clustered above this value
 # droping ShapeFactor4 values bellow 0.98 as all other values are clustered above this one
 seker_data = beans_data.loc[ (beans_data['Class'] == 'SEKER') &  (beans_data['Roundness'] >= 0.68) & (beans_data['Solidity'] >= 0.96) & (beans_data['ShapeFactor4'] >= 0.98) ]
+data.append(len(seker_data))
 final_data = final_data.append(seker_data)
 
 barb_data = beans_data.loc[ (beans_data['Class'] == 'BARBUNYA') &  (beans_data['MinorAxisLength'] < 325)]
+data.append(len(barb_data))
 final_data = final_data.append(barb_data)
 
 
 bombay_data = beans_data.loc[ (beans_data['Class'] == 'BOMBAY') &  (beans_data['ShapeFactor2'] < 0.0014)]
+data.append(len(bombay_data))
 final_data = final_data.append(bombay_data)
 # plot_class_data(bombay_data, 'BOMBAY', 'bombay')
 
 
+
+
+cali_data = beans_data.loc[ (beans_data['Class'] == 'CALI') &  (beans_data['Area'] < 110000) & (beans_data['Eccentricity'] > 0.70) & (beans_data['MinorAxisLength'] > 185) ]
+data.append(len(cali_data))
+final_data = final_data.append(cali_data)
+
 horoz_data = beans_data.loc[ (beans_data['Class'] == 'HOROZ') &  (beans_data['Area'] < 80000)  & (beans_data['ConvexArea'] < 80000) & (beans_data['EquivDiameter'] < 320)]
+data.append(len(horoz_data))
 final_data = final_data.append(horoz_data)
 # plot_class_data(horoz_data, 'HOROZ', 'horoz')
 
-cali_data = beans_data.loc[ (beans_data['Class'] == 'CALI') &  (beans_data['Area'] < 110000) & (beans_data['Eccentricity'] > 0.70) & (beans_data['MinorAxisLength'] > 185) ]
-final_data = final_data.append(cali_data)
-
-derma_data = beans_data.loc[ (beans_data['Class'] == 'DERMASON') &  (beans_data['Perimeter'] < 850) & (beans_data['Roundness'] > 0.59)] 
-final_data = final_data.append(derma_data)
-
 sira_data = beans_data.loc[ (beans_data['Class'] == 'SIRA') &  (beans_data['Area'] < 63000) & (beans_data['Roundness'] > 0.59)] 
+data.append(len(sira_data))
 final_data = final_data.append(sira_data)
 # # fina_data = final_data.append(horoz_data)
 
+derma_data = beans_data.loc[ (beans_data['Class'] == 'DERMASON') &  (beans_data['Perimeter'] < 850) & (beans_data['Roundness'] > 0.59)] 
+data.append(len(derma_data))
+final_data = final_data.append(derma_data)
 
+
+
+def barChart(beans_data, data):
+    plt.rcdefaults()
+    fig, ax = plt.subplots()
+
+    # Example data
+    classes = pd.unique(beans_data.iloc[:, -1])
+
+    print(classes)
+
+    labels = classes
+    plt.xticks(range(len(data)), labels)
+    plt.xlabel('Class')
+    plt.ylabel('Amounts')
+    plt.title('Number of beans')
+    plt.bar(range(len(data)), data) 
+    plt.show()
+
+
+barChart(beans_data, data)
+
+"""
 print("EQUALS ", cp.equals(beans_data))
 # open outup file in append mode
-outfile = '../resources/processed.csv'
+outfile = './resources/processed.csv'
 f = open(outfile, 'w')
 f.seek(0)
 f.truncate() # delete previous contents
@@ -103,4 +136,4 @@ f.close()
 
 print("FINAL", final_data.head())
 
-final_data.to_csv(outfile, index=False)
+final_data.to_csv(outfile, index=False)"""

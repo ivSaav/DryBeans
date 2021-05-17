@@ -18,6 +18,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import neighbors, datasets
 
+from sklearn.model_selection import StratifiedShuffleSplit
+
 def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     print("DFS ====")
     clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5)
@@ -33,7 +35,7 @@ def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     # print(beans.columns[:-1])
     # r = tree.export_text(clf, feature_names=beans.columns[:-1].tolist())
     # print(r)
-    print("accuracy: ", clf.score(X, y))
+    print("accuracy: ", clf.score(X_test, y_test))
     
 
 def neural(beans, X, y, X_train, X_test, y_train, y_test):
@@ -111,19 +113,50 @@ def main():
         print(f'[!] {n} values are missing.')
 
     # extract values and class labels
-    X, y = beans.iloc[:, :-1], beans.iloc[:, -1]
+    X, y = np.array(beans.iloc[:, :-1]), np.array(beans.iloc[:, -1])
     # split values into testing and training datasets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, train_size=0.8, random_state=0)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, train_size=0.8, random_state=0)
     
-    # dfs(beans, X, y, X_train, X_test, y_train, y_test)
+    sss = StratifiedShuffleSplit(n_splits=5, test_size=0.2, train_size=0.8, random_state=0)
+    
+    for train_index, test_index in sss.split(X, y):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+    print(len(X_train))
+    print(len(X_test))
+
+    # [ for beans_data['Class'] == 'DERMASON']
+
+    dict_original = { key:0 for key in pd.unique(beans.iloc[:, -1]) }
+       
+    
+    dict_train = { key:0 for key in pd.unique(beans.iloc[:, -1]) }
+    
+    for y in y_train:
+        dict_train[y] += 1
+        dict_original[y] += 1
+       
+    dic_test = { key:0 for key in pd.unique(beans.iloc[:, -1]) } 
+    for y in y_test:
+        dic_test[y] +=1
+        dict_original[y] += 1
+    
+    print("TEST: ", dic_test)
+    print("TRAIN: ",dict_train)
+    print("ORIGINAL: ", dict_original)
+
+    
+
+    #dfs(beans, X, y, X_train, X_test, y_train, y_test)
      
-    # neural(beans, X, y, X_train, X_test, y_train, y_test)
+    #neural(beans, X, y, X_train, X_test, y_train, y_test)
 
-    # svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
-    # # svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
-    # #svc_params_search(X, y, X_train, X_test, y_train, y_test)
+    #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
+    #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
+    #svc_params_search(X, y, X_train, X_test, y_train, y_test)
 
-    knn(X,y, X_train, X_test, y_train, y_test)
+    #knn(X,y, X_train, X_test, y_train, y_test)
 
     
     
