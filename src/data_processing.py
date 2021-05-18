@@ -51,7 +51,7 @@ print(beans_data.describe())
 #violin_plot(beans_data, ['Area', 'Eccentricity', 'Roundness', 'Solidity'], 'violin')
 # violin_plot(beans_data, ['ShapeFactor1', 'ShapeFactor2', 'ShapeFactor3', 'ShapeFactor4'], 'violin_shapefactors')
 
-# plot_class_data(beans_data, 'SEKER', 'barbunya_orig')
+# plot_class_data(beans_data, 'SEKER', 'seker_orig')
 # plot_class_data(beans_data, 'BARBUNYA', 'barbunya_orig')
 # plot_class_data(beans_data, 'BOMBAY', 'bombay_orig')
 # plot_class_data(beans_data, 'CALI', 'cali_orig')
