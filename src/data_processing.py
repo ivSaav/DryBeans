@@ -26,6 +26,31 @@ def violin_plot(data, columns, out_file, out_dir='./output/'):
         plt.subplot(plot_rows, plot_cols, column_index + 1)
         sb.violinplot(x='Class', y=column, data=data)
     plt.savefig(f'{out_dir}{out_file}.png')
+    
+def plot_bar_distribution(data):
+    # Extracting class lables
+    classes = pd.unique(beans_data.iloc[:, -1])
+    percent = [(data['Class'] == c).sum()/len(data) for c in classes]
+    
+    dic = { "Class" : [c for c in classes], "Percentage" : [p for p in percent]}
+    df = pd.DataFrame (dic, columns = ['Class','Percentage'])
+    
+    ax = sb.barplot(x="Class", y="Percentage", data=df)
+    plt.show()
+    
+def plot_pie_distribution(data):
+    
+     # Extracting class lables
+    classes = pd.unique(beans_data.iloc[:, -1])
+    amounts = [(data['Class'] == c).sum() for c in classes]
+    
+    pie, ax = plt.subplots(figsize=[10,10])
+    # Plot
+    plt.pie(x=amounts,labels=classes, autopct='%.1f%%', explode=[0.05]*len(classes))
+    plt.title("Beans Data Distribution")
+    plt.axis('equal')
+    plt.show()  
+    
 
 
 
@@ -59,71 +84,43 @@ print(beans_data.describe())
 # plot_class_data(beans_data, 'SIRA', 'sira_orig')
 # plot_class_data(beans_data, 'DERMASON', 'dermason_orig')
 
-# date frame t obe written into csv
+# data frame to be written into csv
 print(beans_data.columns.insert(0, 'id'))
 final_data = pd.DataFrame(columns=beans_data.columns)
 cp = beans_data.copy()
 
-data = []
 # droping any seker rows with a Solidity value less than 0.96 (alll solidity values except one are clustered above 0.96)
 # droping values bellow 0.68 as Seker bean has a round shape and most values are clustered above this value
 # droping ShapeFactor4 values bellow 0.98 as all other values are clustered above this one
 seker_data = beans_data.loc[ (beans_data['Class'] == 'SEKER') &  (beans_data['Roundness'] >= 0.68) & (beans_data['Solidity'] >= 0.96) & (beans_data['ShapeFactor4'] >= 0.98) ]
-data.append(len(seker_data))
 final_data = final_data.append(seker_data)
 
 barb_data = beans_data.loc[ (beans_data['Class'] == 'BARBUNYA') &  (beans_data['MinorAxisLength'] < 325)]
-data.append(len(barb_data))
 final_data = final_data.append(barb_data)
 
 
 bombay_data = beans_data.loc[ (beans_data['Class'] == 'BOMBAY') &  (beans_data['ShapeFactor2'] < 0.0014)]
-data.append(len(bombay_data))
 final_data = final_data.append(bombay_data)
-# plot_class_data(bombay_data, 'BOMBAY', 'bombay')
-
-
 
 
 cali_data = beans_data.loc[ (beans_data['Class'] == 'CALI') &  (beans_data['Area'] < 110000) & (beans_data['Eccentricity'] > 0.70) & (beans_data['MinorAxisLength'] > 185) ]
-data.append(len(cali_data))
 final_data = final_data.append(cali_data)
 
 horoz_data = beans_data.loc[ (beans_data['Class'] == 'HOROZ') &  (beans_data['Area'] < 80000)  & (beans_data['ConvexArea'] < 80000) & (beans_data['EquivDiameter'] < 320)]
-data.append(len(horoz_data))
 final_data = final_data.append(horoz_data)
-# plot_class_data(horoz_data, 'HOROZ', 'horoz')
 
 sira_data = beans_data.loc[ (beans_data['Class'] == 'SIRA') &  (beans_data['Area'] < 63000) & (beans_data['Roundness'] > 0.59)] 
-data.append(len(sira_data))
 final_data = final_data.append(sira_data)
-# # fina_data = final_data.append(horoz_data)
 
 derma_data = beans_data.loc[ (beans_data['Class'] == 'DERMASON') &  (beans_data['Perimeter'] < 850) & (beans_data['Roundness'] > 0.59)] 
-data.append(len(derma_data))
 final_data = final_data.append(derma_data)
 
 
 
-def barChart(beans_data, data):
-    plt.rcdefaults()
-    fig, ax = plt.subplots()
-
-    # Example data
-    classes = pd.unique(beans_data.iloc[:, -1])
-
-    print(classes)
-
-    labels = classes
-    plt.xticks(range(len(data)), labels)
-    plt.xlabel('Class')
-    plt.ylabel('Amounts')
-    plt.title('Number of beans')
-    plt.bar(range(len(data)), data) 
-    plt.show()
 
 
-barChart(beans_data, data)
+# plot_pie_distribution(beans_data)
+plot_bar_distribution(beans_data)
 
 """
 print("EQUALS ", cp.equals(beans_data))

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sd
+import seaborn as sb
 import pandas as pd
 from matplotlib.colors import ListedColormap
 from sklearn import tree
@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import plot_confusion_matrix, classification_report
+from sklearn.metrics import plot_confusion_matrix, classification_report, f1_score
 
 
 
@@ -61,6 +61,14 @@ def neural(beans, X, y, X_train, X_test, y_train, y_test):
     # show confusion matrix
     # plot_confusion_matrix(clf, X_test, y_test)
     # plt.show()
+ 
+def neural_params_search(X, y):
+    # Evaluates and searches for the best mlp parameters
+    params = {'solver': ['adam', 'sgd'], 'hidden_layer_sizes': [5, 6, 7, 8, 9, 10, 11, 12], 'max_iter': [200, 500]}
+    grid = GridSearchCV(MLPClassifier(), params, refit=True, verbose=5, n_jobs=2)
+    grid.fit(X, y)
+    print(grid.best_estimator_)
+
      
 # Support vector classification
 def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
@@ -81,11 +89,11 @@ def svc(beans, X, y, X_train, X_test, y_train, y_test, kernel="linear"):
     # plot_confusion_matrix(clf, X_test, y_test)
     # plt.show()
     
-def svc_params_search(X, y, X_train, X_test, y_train, y_test):
+def svc_params_search(X, y):
     # Evaluates and searches for the best svc parameters
     params = {'C': [0.1, 1, 10, 100], 'gamma': [1, 0.1, 0.01, 0.001], 'kernel': ['rbf']}
-    grid = GridSearchCV(svm.SVC(),params,refit=True,verbose=2)
-    grid.fit(X_train,y_train)
+    grid = GridSearchCV(svm.SVC(),params, refit=True, verbose=2)
+    grid.fit(X, y)
     print(grid.best_estimator_)
 
 
@@ -93,7 +101,7 @@ def svc_params_search(X, y, X_train, X_test, y_train, y_test):
 #Nearest Neighbors Classification
 def knn(X, y, X_train, X_test, y_train, y_test):
     print("KNN ====")
-    neigh = KNeighborsClassifier(n_neighbors=5)
+    neigh = KNeighborsClassifier(n_neighbors=6, leaf_size=50)
     neigh.fit(X_train, y_train)
 
     predictions = neigh.predict(X_test)
@@ -122,31 +130,7 @@ def main():
     for train_index, test_index in sss.split(X, y):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
-
-    print(len(X_train))
-    print(len(X_test))
-
-    # [ for beans_data['Class'] == 'DERMASON']
-
-    dict_original = { key:0 for key in pd.unique(beans.iloc[:, -1]) }
-       
-    
-    dict_train = { key:0 for key in pd.unique(beans.iloc[:, -1]) }
-    
-    for y in y_train:
-        dict_train[y] += 1
-        dict_original[y] += 1
-       
-    dic_test = { key:0 for key in pd.unique(beans.iloc[:, -1]) } 
-    for y in y_test:
-        dic_test[y] +=1
-        dict_original[y] += 1
-    
-    print("TEST: ", dic_test)
-    print("TRAIN: ",dict_train)
-    print("ORIGINAL: ", dict_original)
-
-    
+   
 
     #dfs(beans, X, y, X_train, X_test, y_train, y_test)
      
@@ -156,7 +140,8 @@ def main():
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
     #svc_params_search(X, y, X_train, X_test, y_train, y_test)
 
-    #knn(X,y, X_train, X_test, y_train, y_test)
+    neural_params_search(X, y)
+    # knn(X,y, X_train, X_test, y_train, y_test)
 
     
     
