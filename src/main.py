@@ -38,8 +38,7 @@ def dfs(beans, X, y, X_train, X_test, y_train, y_test):
     print("accuracy: ", clf.score(X_test, y_test))
     
 
-def neural(beans, X, y, X_train, X_test, y_train, y_test):
-    print("NEURAL ====")
+def neural(X_train, X_test, y_train, y_test):
     scaler = StandardScaler()
     scaler.fit(X_train)
 
@@ -47,27 +46,37 @@ def neural(beans, X, y, X_train, X_test, y_train, y_test):
     X_test = scaler.transform(X_test)
 
     
-    clf = MLPClassifier(solver='adam', hidden_layer_sizes=29, max_iter=500)
+    clf = MLPClassifier(solver='adam', alpha=0.001, hidden_layer_sizes=11, max_iter=400)
     clf.fit(X_train, y_train)
    
     # generate predictions
     predictions = clf.predict(X_test)
-    print("\nClassification Report ========= ")
     print(classification_report(y_test, predictions))
     
-    # score model
-    print("Score: ", clf.score(X_test, y_test))  
+    score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
+    print("F1-Score: ",  f1_score(y_true=y_test, y_pred=predictions, average='weighted'))
+    return score
     
     # show confusion matrix
     # plot_confusion_matrix(clf, X_test, y_test)
     # plt.show()
  
 def neural_params_search(X, y):
+    scaler = StandardScaler()
+    scaler.fit(X)
+
+    X_train = scaler.transform(X)
     # Evaluates and searches for the best mlp parameters
-    params = {'solver': ['adam', 'sgd'], 'hidden_layer_sizes': [5, 6, 7, 8, 9, 10, 11, 12], 'max_iter': [200, 500]}
-    grid = GridSearchCV(MLPClassifier(), params, refit=True, verbose=5, n_jobs=2)
-    grid.fit(X, y)
-    print(grid.best_estimator_)
+    params = {
+                'solver': ['adam', 'sgd'], 
+                'alpha': [0.0001, 0.05], 
+                'hidden_layer_sizes': [8, 9, 10, 11, 12], 
+                'max_iter': [300, 500]
+            }
+    grid = GridSearchCV(MLPClassifier(), params, scoring='f1_weighted', refit=True, verbose=0, n_jobs=2)
+    grid.fit(X_train, y)
+    grid.best_estimator_
+    grid.best_params_
 
      
 # Support vector classification
@@ -134,13 +143,13 @@ def main():
 
     #dfs(beans, X, y, X_train, X_test, y_train, y_test)
      
-    #neural(beans, X, y, X_train, X_test, y_train, y_test)
+    # neural(X_train, X_test, y_train, y_test)
 
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
     #svc_params_search(X, y, X_train, X_test, y_train, y_test)
 
-    neural_params_search(X, y)
+    neural_params_search(X_train, y_train)
     # knn(X,y, X_train, X_test, y_train, y_test)
 
     

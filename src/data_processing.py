@@ -92,7 +92,7 @@ cp = beans_data.copy()
 # droping any seker rows with a Solidity value less than 0.96 (alll solidity values except one are clustered above 0.96)
 # droping values bellow 0.68 as Seker bean has a round shape and most values are clustered above this value
 # droping ShapeFactor4 values bellow 0.98 as all other values are clustered above this one
-seker_data = beans_data.loc[ (beans_data['Class'] == 'SEKER') &  (beans_data['Roundness'] >= 0.68) & (beans_data['Solidity'] >= 0.96) & (beans_data['ShapeFactor4'] >= 0.98) ]
+seker_data = beans_data.loc[ (beans_data['Class'] == 'SEKER') & (beans_data['Solidity'] >= 0.96) & (beans_data['ShapeFactor4'] >= 0.98) ]
 final_data = final_data.append(seker_data)
 
 barb_data = beans_data.loc[ (beans_data['Class'] == 'BARBUNYA') &  (beans_data['MinorAxisLength'] < 325)]
@@ -122,7 +122,7 @@ final_data = final_data.append(derma_data)
 # plot_pie_distribution(beans_data)
 plot_bar_distribution(beans_data)
 
-"""
+
 print("EQUALS ", cp.equals(beans_data))
 # open outup file in append mode
 outfile = './resources/processed.csv'
@@ -133,4 +133,4 @@ f.close()
 
 print("FINAL", final_data.head())
 
-final_data.to_csv(outfile, index=False)"""
+final_data.to_csv(outfile, index=False)
