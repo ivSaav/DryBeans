@@ -20,16 +20,24 @@ from sklearn import neighbors, datasets
 
 from sklearn.model_selection import StratifiedShuffleSplit
 
-def dfs(X_train, X_test, y_train, y_test):
+def dtc(X_train, X_test, y_train, y_test):
     clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5)
     clf = clf.fit(X_test, y_test)
        
+    # generate predictions
     predictions = clf.predict(X_test)  
     print(classification_report(y_test, predictions))  
     
-    score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
-    print("F1 Score: ", score)
-    return score
+    # save classification report
+    report = classification_report(y_test, predictions, output_dict=True)
+    print("F1 Score: ", report['weighted avg']['f1-score'])
+    
+    # show confusion matrix
+    fig, ax = plt.subplots(figsize=(14, 10))
+    plot_confusion_matrix(clf, X_test, y_test, ax=ax).ax_.set_title('DTC Confusion Matrix')
+    plt.show()
+    
+    return report
     
 
 def neural(X_train, X_test, y_train, y_test):
@@ -43,18 +51,20 @@ def neural(X_train, X_test, y_train, y_test):
     clf = MLPClassifier(solver='adam', alpha=0.001, hidden_layer_sizes=11, max_iter=400)
     clf.fit(X_train, y_train)
    
-    # generate predictions
+     # generate predictions
     predictions = clf.predict(X_test)
     print(classification_report(y_test, predictions))
     
-    score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
-    print("F1-Score: ",  f1_score(y_true=y_test, y_pred=predictions, average='weighted'))
+    # save classification report
+    report = classification_report(y_test, predictions, output_dict=True)
+    print("F1 Score: ", report['weighted avg']['f1-score'])
     
     # show confusion matrix
-    plot_confusion_matrix(clf, X_test, y_test)
+    fig, ax = plt.subplots(figsize=(14, 10))
+    plot_confusion_matrix(clf, X_test, y_test, ax=ax).ax_.set_title('MLP Confusion Matrix')
     plt.show()
     
-    return score
+    return report
  
 def neural_params_search(X, y):
     scaler = StandardScaler()
@@ -136,15 +146,15 @@ def main():
         y_train, y_test = y[train_index], y[test_index]
    
 
-    #dfs(beans, X, y, X_train, X_test, y_train, y_test)
+    # dtc(X_train, X_test, y_train, y_test)
      
-    # neural(X_train, X_test, y_train, y_test)
+    neural(X_train, X_test, y_train, y_test)
 
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
     #svc(beans, X, y, X_train, X_test, y_train, y_test, "rbf")
     #svc_params_search(X, y, X_train, X_test, y_train, y_test)
 
-    neural_params_search(X_train, y_train)
+    # neural_params_search(X_train, y_train)
     # knn(X,y, X_train, X_test, y_train, y_test)
 
     
