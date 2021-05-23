@@ -20,22 +20,17 @@ from sklearn import neighbors, datasets
 
 from sklearn.model_selection import StratifiedShuffleSplit
 
-def dfs(beans, X, y, X_train, X_test, y_train, y_test):
-    print("DFS ====")
+def dfs(X_train, X_test, y_train, y_test):
     clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5)
-    
     clf = clf.fit(X_test, y_test)
-    
-    plt.figure(figsize=(30, 30), dpi=500)
-    tree.plot_tree(clf, feature_names=beans.columns[:-1].tolist(),class_names=pd.unique(y_test)) 
-   
+       
     predictions = clf.predict(X_test)  
     print("\nClassification Report ========= ")
     print(classification_report(y_test, predictions))  
-    # print(beans.columns[:-1])
-    # r = tree.export_text(clf, feature_names=beans.columns[:-1].tolist())
-    # print(r)
-    print("accuracy: ", clf.score(X_test, y_test))
+    
+    score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
+    print("F1 Score: ", score)
+    return score
     
 
 def neural(X_train, X_test, y_train, y_test):
@@ -55,11 +50,12 @@ def neural(X_train, X_test, y_train, y_test):
     
     score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
     print("F1-Score: ",  f1_score(y_true=y_test, y_pred=predictions, average='weighted'))
-    return score
     
     # show confusion matrix
-    # plot_confusion_matrix(clf, X_test, y_test)
-    # plt.show()
+    plot_confusion_matrix(clf, X_test, y_test)
+    plt.show()
+    
+    return score
  
 def neural_params_search(X, y):
     scaler = StandardScaler()
