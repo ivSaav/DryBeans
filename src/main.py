@@ -25,7 +25,6 @@ def dfs(X_train, X_test, y_train, y_test):
     clf = clf.fit(X_test, y_test)
        
     predictions = clf.predict(X_test)  
-    print("\nClassification Report ========= ")
     print(classification_report(y_test, predictions))  
     
     score = f1_score(y_true=y_test, y_pred=predictions, average='weighted')
@@ -66,13 +65,13 @@ def neural_params_search(X, y):
     params = {
                 'solver': ['adam', 'sgd'], 
                 'alpha': [0.0001, 0.05], 
-                'hidden_layer_sizes': [8, 9, 10, 11, 12], 
-                'max_iter': [300, 500]
+                'hidden_layer_sizes': [10, 11, 12], 
+                'max_iter': [400, 500]
             }
-    grid = GridSearchCV(MLPClassifier(), params, scoring='f1_weighted', refit=True, verbose=0, n_jobs=2)
+    grid = GridSearchCV(MLPClassifier(), params, scoring='f1_weighted', refit=True, verbose=10, n_jobs=2)
     grid.fit(X_train, y)
-    grid.best_estimator_
-    grid.best_params_
+    print(grid.best_estimator_)
+    print(grid.best_params_)
 
      
 # Support vector classification
