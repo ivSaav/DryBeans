@@ -20,8 +20,14 @@ from sklearn import neighbors, datasets
 
 from sklearn.model_selection import StratifiedShuffleSplit
 
+def print_f1_score(report):
+    for i, (r,v) in enumerate(report.items()):
+        if i > 6:
+            break
+        print(r,round(v['f1-score'], 3))
+
 def dtc(X_train, X_test, y_train, y_test):
-    clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5)
+    clf = tree.DecisionTreeClassifier(max_depth=10, min_samples_leaf=5, class_weight='balanced')
     clf = clf.fit(X_test, y_test)
        
     # generate predictions
@@ -31,6 +37,8 @@ def dtc(X_train, X_test, y_train, y_test):
     # save classification report
     report = classification_report(y_test, predictions, output_dict=True)
     print("F1 Score: ", report['weighted avg']['f1-score'])
+    
+    print_f1_score(report)
     
     # show confusion matrix
     fig, ax = plt.subplots(figsize=(14, 10))
@@ -204,17 +212,17 @@ def main():
 
     dtc_report = dtc(X_train, X_test, y_train, y_test)
      
-    neural_report = neural(X_train, X_test, y_train, y_test)
+    # neural_report = neural(X_train, X_test, y_train, y_test)
 
-    #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
-    svc_report = svc(X_train, X_test, y_train, y_test, "rbf")
+    # #svc(beans, X, y, X_train, X_test, y_train, y_test, "linear")
+    # svc_report = svc(X_train, X_test, y_train, y_test, "rbf")
     # svc_params_search(X, y)
 
-    compare_class_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'] )
-    # neural_params_search(X_train, y_train)
-    # knn(X,y, X_train, X_test, y_train, y_test)
+    # compare_class_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'] )
+    # # neural_params_search(X_train, y_train)
+    # # knn(X,y, X_train, X_test, y_train, y_test)
 
-    compare_overall_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'])
+    # compare_overall_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'])
     
 if __name__ == "__main__":
     main()
