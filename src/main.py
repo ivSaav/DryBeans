@@ -212,7 +212,7 @@ def main():
     svc_report = svc(X_train, X_test, y_train, y_test, "rbf")
     # svc_params_search(X, y)
 
-    # compare_class_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'] )
+    compare_class_results([neural_report, svc_report, dtc_report], ['MLP', 'SVC', 'DTC'] )
     # neural_params_search(X_train, y_train)
     # knn(X,y, X_train, X_test, y_train, y_test)
 

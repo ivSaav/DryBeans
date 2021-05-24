@@ -35,6 +35,7 @@ def plot_bar_distribution(data):
     dic = { "Class" : [c for c in classes], "Percentage" : [p for p in percent]}
     df = pd.DataFrame (dic, columns = ['Class','Percentage'])
     
+    sb.set(font_scale=1.5)
     ax = sb.barplot(x="Class", y="Percentage", data=df)
     plt.show()
     
@@ -49,9 +50,7 @@ def plot_pie_distribution(data):
     plt.pie(x=amounts,labels=classes, autopct='%.1f%%', explode=[0.05]*len(classes))
     plt.title("Beans Data Distribution")
     plt.axis('equal')
-    plt.show()  
-    
-
+    plt.show() 
 
 
 #print("Dry Beans\n\n", beans_data)
@@ -119,7 +118,7 @@ final_data = final_data.append(derma_data)
 
 
 
-# plot_pie_distribution(beans_data)
+plot_pie_distribution(beans_data)
 plot_bar_distribution(beans_data)
 
 
