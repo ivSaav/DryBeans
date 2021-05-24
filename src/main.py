@@ -141,7 +141,6 @@ def knn(X, y, X_train, X_test, y_train, y_test):
 
 
 def compare_class_results(reports, model_names):
-    
     dic = { 'Model' : [], 'Class' : [], 'Score':[]}
     
     # extracting relevant data from each model report
@@ -164,7 +163,6 @@ def compare_class_results(reports, model_names):
     plt.show()
     
 def compare_overall_results(reports, model_names):
-    
     dic = { 'Model' : [], 'Score':[]}
     
     # extracting relevant data from each model report
