@@ -1,7 +1,9 @@
 # DryBeans
 FEUP IART - Assignment 2
 
-IART 2020/2021 - T4G4
+2020/2021
+
+T4G4
 
 Breno Accioly - up201800170@edu.fe.up.pt
 
